@@ -1,0 +1,106 @@
+[
+    {
+        "simulation": {
+            "timestep":    0.05,
+            "random_seed": 42,
+            "noise_level": {
+                "position": 0.000,
+                "orientation": 0.0
+            },
+            "end_time":    0,
+            "real_world":  0
+        },
+        "car": {
+            "general": {
+                "max_steering_angle_degree": 20, 
+                "max_steering_rate_degree": 40,
+                "speed_FB_pole": -10,
+                "kSpeed": 3.0,
+                "kSpeed_old": 1.0
+            },
+            "kinematic_bm":{
+                "length": 0.17, 
+                "mass": 2.575
+            },
+            "mercedes_C220": {
+                "street_friction": 0.9,
+                "chassis":{
+                    "l_f": 1.34,
+                    "l_r": 1.42,
+                    "s_r": 0.77,
+                    "s_l": 0.77,
+                    "mass": 1454,
+                    "rho_air": 1.225,
+                    "c_wA": 0.609,
+                    "J_y": 2200
+                },
+                "tire": {
+                    "mass": [50, 50, 50, 50], 
+                    "c_fr": 0.013,
+                    "r_dyn": 0.3032,
+                    "r_0": 0.315,
+                    "r_stat": 0.2914,
+                    "magic_y": {
+                        "B": 10,
+                        "C": 1.3,
+                        "D": 1.0,
+                        "E": -0.25
+                    }
+                }
+            },
+            "dynamic_bm":{
+                "street_friction": 0.9,
+                "chassis":{
+                    "l_f": 0.085,
+                    "l_r": 0.085,
+                    "mass": 2.575,
+                    "rho_air": 1.225,
+                    "c_wA": 0.3,
+                    "J_y": 0.0062
+                },
+                "tire": {
+                    "mass": [0.05, 0.05, 0.05, 0.05], 
+                    "c_fr": 0.015,
+                    "r_dyn": 0.025,
+                    "magic_y": {
+                        "B": 10,
+                        "C": 1.9,
+                        "D": 1.0,
+                        "E": 0.97
+                    }
+                }
+            }
+        },
+        "controller": {
+            "yaw_rate":{ 
+                "Kp": 0.05,
+                "Ki": 0.05,
+                "Kd": 0.0
+            },
+            "trajectory":{
+                "_comment": "Control law from: Althoff et al. 2014, Online verification of automated road vehicles using reachability analysis",
+                "info": ["lateral", "orientation", "yaw rate", "steering velocity", "long. error", "velo error"],
+                "gains": [4, 8, 1, 2, 1, 0.1] 
+            },
+            "steering_rate": {
+                "Kp": 2,
+                "Ki": 0.0,
+                "Kd": 0.0
+            }
+        }, 
+        "NN_model": {
+            "input_size": 2,
+            "output_size": 1,
+            "hidden_layer_size": 10,
+            "learning_rate": 0.01, 
+            "batch_size": 32, 
+            "input_type_training": "actual",
+            "input_type_eval": "desired"
+        }, 
+        "learning": {
+            "global_rounds": 5,
+            "local_epochs": 1,
+            "test_path_idx": [0, 5, 7, 10]
+        }
+    }
+]
