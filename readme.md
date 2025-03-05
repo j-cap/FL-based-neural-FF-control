@@ -71,18 +71,20 @@ conda create -f env.yml  # If a conda environment file is available
         ```bash
         python exp_federated_learning_eval.py
         ```
-
+        ![](img/img_png/fig-7.png)
     - **Local Epochs & Global Communication Rounds:**
         - Evaluate *FL-based neural FF controller* for different number of local epochs and communication rounds
         ```bash
         python exp_FL_eval_local_vs_global.py
         ```
+        ![](img/img_png/fig-10.png)
     - **Comparison to Local Neural FF**:
         - Train individual neural FF controller on each client
         - Comparison the the *FL-based neural FF controller*
         ```bash
         python exp_local_models.py
         ```
+        ![](img/img_png/fig-11.png)
 - **Client Paths:**
     - Generate client paths for federated learning
     - Visualize the paths
@@ -94,14 +96,10 @@ conda create -f env.yml  # If a conda environment file is available
     ```bash
     python exp_FF_FB_performance_results.py
     ```
+## Visualization
+All plots in the paper are given in the `/img/` folder.
 
-![asd](img/plots_federated/testpaths_MTE.pdf)
-
-
-<embed src="img/plots_federated/testpaths_MTE.pdf" width="500" height="375" type="application/pdf">
-
-
-## Results & Visualization
+## Results 
 Specifc client path information is stored in the `/results/clients/`.
 
 The results of the experiment `exp_FL_eval_local_vs_global.py` are stored in the `/results/FL_local_vs_global/` folder. 
