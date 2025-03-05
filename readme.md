@@ -1,4 +1,4 @@
-# Project Title
+# Federated Learning for Privacy-Preserving Feedforward Control in Multi-Agent Systems
 
 ## Description
 This repository contains code for experiments described in the paper *Federated Learning for Privacy-Preserving Feedforward Control in Multi-Agent Systems* ([arXiv:2503.02693](https://arxiv.org/abs/2503.02693)), submitted to the [IJCNN 2025](https://2025.ijcnn.org/).
