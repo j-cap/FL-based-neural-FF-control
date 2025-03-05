@@ -48,9 +48,7 @@ ff_input_eval  = config["NN_model"]["input_type_eval"] # 'desired' or 'actual' f
 torch.manual_seed(RNG_SEED)
 np.random.seed(RNG_SEED)
 
-if os.getcwd().split('\\')[-1] == 'paper_FedFF':
-    path_file = 'paths.json'
-
+path_file = 'paths.json'
 PATHS = create_spline_paths(file=path_file, real_world=config['simulation']['real_world'])
 
 test_path_idx = config['learning']['test_path_idx']

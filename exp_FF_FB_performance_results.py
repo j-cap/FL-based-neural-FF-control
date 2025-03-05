@@ -17,6 +17,7 @@ from paths import create_spline_paths
 from utils_FL import eval_FF_model
 
 SAVE = True   
+
 plt.rcParams['font.family'] = 'Times New Roman'
 plt.rcParams['font.size'] = 18
 client_idx = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
@@ -24,8 +25,7 @@ client_idx = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI',
 with open("config.json") as f:
     config = json.load(f)[0]
 
-if os.getcwd().split('\\')[-1] == 'paper_FedFF':
-    path_file = 'paths.json'
+path_file = 'paths.json'
 
 RNG_SEED = config['simulation']['random_seed']
 

@@ -12,7 +12,7 @@ from paths import create_spline_paths
 import json
 import os 
 import numpy as np
-import pandas as pd
+import pandas as pd # type: ignore
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 from matplotlib.colors import LinearSegmentedColormap
@@ -30,9 +30,7 @@ RNG_SEED = config['simulation']['random_seed']
 
 np.random.seed(RNG_SEED)
 
-if os.getcwd().split('\\')[-1] == 'paper_FedFF':
-    path_file = 'paths.json'
-
+path_file = 'paths.json'
 PATHS = create_spline_paths(file=path_file, real_world=config['simulation']['real_world'])
 
 test_path_idx = config['learning']['test_path_idx']

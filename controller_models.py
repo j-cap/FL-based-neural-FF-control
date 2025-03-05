@@ -5,11 +5,8 @@ Some controller implementations
 """
 
 import numpy as np
-from paths import SplinePath
 import matplotlib.pyplot as plt
-import json 
 
-from utils_control import simulate_closed_loop
 import torch
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
@@ -104,43 +101,29 @@ def train_FF_model(model: nn.Module,
     
     return 
 
-class PD:
-    def __init__(self, Kp, Kd):
-        self.Kp = Kp
-        self.Kd = Kd
-        self.prev_error = 0
-        self.t_prev = -1e-8
 
-    def control(self, error, t):
-        dt = t - self.t_prev
-        self.t_prev = t
-        derivative = (error - self.prev_error)
-        self.prev_error = error
-        return self.Kp * error + self.Kd * derivative
-   
+# class PID:
+#     def __init__(self, Kp, Ki, Kd):
+#         self.Kp = Kp
+#         self.Ki = Ki
+#         self.Kd = Kd
+#         self.prev_error = 0
+#         self.integral = 0
+#         self.t_prev = -1e-8
+#         self.integral_max = 1.75
 
-class PID:
-    def __init__(self, Kp, Ki, Kd):
-        self.Kp = Kp
-        self.Ki = Ki
-        self.Kd = Kd
-        self.prev_error = 0
-        self.integral = 0
-        self.t_prev = -1e-8
-        self.integral_max = 1.75
+#     def control(self, error, t):
+#         dt = t - self.t_prev
+#         self.integral += error * dt
+#         derivative = (error - self.prev_error) * dt
+#         self.prev_error = error
+#         self.t_prev = t
 
-    def control(self, error, t):
-        dt = t - self.t_prev
-        self.integral += error * dt
-        derivative = (error - self.prev_error) * dt
-        self.prev_error = error
-        self.t_prev = t
+#         if self.integral > self.integral_max:
+#             # print("Integral too large")
+#             self.integral = self.integral_max * np.sign(self.integral)
 
-        if self.integral > self.integral_max:
-            # print("Integral too large")
-            self.integral = self.integral_max * np.sign(self.integral)
-
-        return self.Kp * error + self.Ki * self.integral + self.Kd * derivative
+#         return self.Kp * error + self.Ki * self.integral + self.Kd * derivative
     
 
 class TrajectoryFollower:
@@ -184,47 +167,13 @@ class TrajectoryFollower:
         u_speed_FB = self.K5 * eps_x # + self.K6 * (v_d - v_a) # -> skip speed control
     
         return u_steer_FB, u_speed_FB
-    
-class TrajFollower_NonlinearBM(TrajectoryFollower):
-    def __init__(self, car_model, gains: list):
-        super().__init__(gains, )
-        self.car = car_model
-
-    def control(self, 
-                x_a, x_d, 
-                y_a, y_d,
-                psi_a, psi_d, 
-                dpsi_a, dpsi_d, 
-                v_a: float, v_d: float=1, 
-                v_0: float = 0):
         
-        kGain = v_0 / (np.abs(v_d) + 1e-4)
-        # calculate errors
-        e_x = x_d - x_a
-        e_y = y_d - y_a
-        e_psi = psi_d - psi_a
-        # wrap e_psi to interval [-pi, pi]
-        e_psi = (e_psi + np.pi) % (2 * np.pi) - np.pi
-        e_dpsi = dpsi_d - dpsi_a
-
-        eps_x = np.cos(psi_d) * e_x + np.sin(psi_d) * e_y
-        eps_y = -np.sin(psi_d) * e_x + np.cos(psi_d) * e_y
-
-        # calcuate steering FB
-        u_steer_FB = kGain * (self.K1 * eps_y + self.K2 * e_psi + self.K3 * e_dpsi)
-        u_steer_FB = np.clip(u_steer_FB, -self.car.max_steer_angle, self.car.max_steer_angle)
-
-        # calculate torque FB
-        acc_input = self.K5 * eps_x + self.K6 * (v_d - v_a)
-        torque_sum = self.car.mass * acc_input * self.car.r_dyn
-        if torque_sum > 0:
-            u_torque_FB = np.array([0.5, 0.5]) * torque_sum
-        else:
-            u_torque_FB = np.array([0.5, 0.5]) * torque_sum
-        
-        return u_steer_FB, u_torque_FB
-    
 class SteeringRateController:
+    """ 
+    Control law from: 
+    Althoff, Matthias, and John M. Dolan. 
+        "Online verification of automated road vehicles using reachability analysis." IEEE Transactions on Robotics 30.4 (2014): 903-918.
+    """
     def __init__(self, 
                  car_model,
                  gains: list):

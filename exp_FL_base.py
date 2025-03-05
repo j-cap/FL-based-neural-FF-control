@@ -17,11 +17,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from torch import nn
 import torch
-import colormaps as cmaps # type: ignore
 
 import os
 import json
-import pprint 
 
 from utils_FL import ClientNode, ServerNode, eval_FF_model
 from controller_models import FFmodelSimple
@@ -48,9 +46,7 @@ global_rounds = config["learning"]["global_rounds"]
 torch.manual_seed(RNG_SEED)
 np.random.seed(RNG_SEED)
 
-if os.getcwd().split('\\')[-1] == 'paper_FedFF':
-    path_file = 'paths.json'
-
+path_file = 'paths.json'
 PATHS = create_spline_paths(file=path_file, real_world=config['simulation']['real_world'])
 
 test_path_idx = config['learning']['test_path_idx']

@@ -1,12 +1,32 @@
 # Project Title
 
 ## Description
-This repository contains code for experiments described in the paper *Federated Learning for Privacy-Preserving Feedforward Control in Multi-Agent Systems* ([arXiv:2503.02693](https://arxiv.org/abs/2503.02693)).
+This repository contains code for experiments described in the paper *Federated Learning for Privacy-Preserving Feedforward Control in Multi-Agent Systems* ([arXiv:2503.02693](https://arxiv.org/abs/2503.02693)), submitted to the [IJCNN 2025](https://2025.ijcnn.org/).
 
-The code is related to **federated learning**, **feedforward-feedback control**, and **dynamic car models**. 
+We integrate Federated Learning (FL) into feedforward (FF) control to enable privacy-preserving, communication-efficient, and decentralized learning in multi-agent systems without sharing private data. 
+This approach is demonstrated in an autonomous driving use case, where FL-based neural FF control improves tracking performance while maintaining data privacy, achieving results comparable to centralized neural FF control.
+
 The project includes implementations for centralized and federated learning in control applications, evaluation scripts, and utilities for processing and visualization. 
 
 ### Basics
+
+The **FL-based neural feedforward (FF) control** integrates **Federated Learning (FL)** into FF control to enable **privacy-preserving, communication-efficient**, and **decentralized learning** of FF controllers in multi-agent systems. 
+Instead of sharing raw data, **each agent (client) trains a local neural FF controller** using its private data and **only shares model updates** with a central server, where updates are aggregated using FL techniques like **FedAvg**, see
+![Fig. 1](img/img_png/fl-based-neural-ff-control-sketch.png)
+The improved global model is then redistributed to clients for inference and further training.
+
+Key benefits of this approach:
+- **Preserves data privacy** by keeping raw data local.
+- **Reduces communication costs** by transmitting only model updates instead of full datasets.
+- **Enables decentralized, continuous learning** of FF controllers.
+- **Improves tracking performance** in control applications, such as autonomous driving.
+
+The method is validated through simulations in an **autonomous vehicle trajectory tracking** task. 
+Results show that **FL-based neural FF control achieves comparable performance to centralized learning** while maintaining privacy and communication efficiency. 
+It also outperforms purely local training by benefiting from shared model updates across multiple clients.
+
+
+
 
 ## Folder Structure
 ```

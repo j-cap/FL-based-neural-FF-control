@@ -6,17 +6,13 @@ In this experiment, we evaluate the number of local epochs vs. global rounds for
 
 # imports
 import numpy as np
-import pandas as pd
+import pandas as pd # type: ignore
 import matplotlib.pyplot as plt
-from torch import nn
 import torch
-import colormaps as cmaps # type: ignore
 
-import os
 import json
-import pprint 
 
-from utils_FL import ClientNode, ServerNode, eval_FF_model
+from utils_FL import ClientNode, ServerNode
 from controller_models import FFmodelSimple
 
 from paths import create_spline_paths
@@ -25,6 +21,11 @@ with open("config.json") as f:
     config = json.load(f)[0]
 
 SAVE = True
+RERUN = False
+
+plt.rcParams['font.family'] = 'Times New Roman'
+plt.rcParams['font.size'] = 18
+client_idx = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
 
 RNG_SEED = config['simulation']['random_seed']
 
@@ -36,9 +37,7 @@ np.random.seed(RNG_SEED)
 
 
 # load paths
-if os.getcwd().split('\\')[-1] == 'paper_FedFF':
-    path_file = 'paths.json'
-
+path_file = 'paths.json'
 PATHS = create_spline_paths(file=path_file, real_world=config['simulation']['real_world'])
 
 test_path_idx = config['learning']['test_path_idx']
@@ -115,17 +114,25 @@ def run_FL(global_rounds=1, local_epochs=1, config=config,
     print(f"Learning done. ")
     return df
 
-print(f"Running the FL simulation ...")
-df_R10_E01 = run_FL(global_rounds=10, local_epochs=1,  repeat=10, seed=RNG_SEED)
-df_R10_E02 = run_FL(global_rounds=10, local_epochs=2,  repeat=10, seed=RNG_SEED)
-df_R10_E05 = run_FL(global_rounds=10, local_epochs=5,  repeat=10, seed=RNG_SEED)
-df_R10_E10 = run_FL(global_rounds=10, local_epochs=10, repeat=10, seed=RNG_SEED)
-
+if RERUN:
+    print(f"Running the FL simulation ...")
+    G = 30
+    repeat = 10
+    df_R10_E01 = run_FL(global_rounds=G, local_epochs=1,  repeat=repeat, seed=RNG_SEED)
+    df_R10_E02 = run_FL(global_rounds=G, local_epochs=2,  repeat=repeat, seed=RNG_SEED)
+    df_R10_E05 = run_FL(global_rounds=G, local_epochs=5,  repeat=repeat, seed=RNG_SEED)
+    df_R10_E10 = run_FL(global_rounds=G, local_epochs=10, repeat=repeat, seed=RNG_SEED)
+else:
+    df_R10_E01 = pd.read_csv("results/FL_local_vs_global/R10_E01.csv", index_col=0)
+    df_R10_E02 = pd.read_csv("results/FL_local_vs_global/R10_E02.csv", index_col=0)
+    df_R10_E05 = pd.read_csv("results/FL_local_vs_global/R10_E05.csv", index_col=0)
+    df_R10_E10 = pd.read_csv("results/FL_local_vs_global/R10_E10.csv", index_col=0)
 if SAVE:
     df_R10_E01.to_csv("results/FL_local_vs_global/R10_E01.csv")
     df_R10_E02.to_csv("results/FL_local_vs_global/R10_E02.csv")
     df_R10_E05.to_csv("results/FL_local_vs_global/R10_E05.csv")
     df_R10_E10.to_csv("results/FL_local_vs_global/R10_E10.csv")
+
 
 print(f"Simulations done --> plot results... ")
 
@@ -148,11 +155,12 @@ E2_col = 'green'
 E5_col = 'red'
 E10_col = 'magenta'
 width = 0.45
-e1, e2, e5, e10 = 'E1', 'E2', 'E5', 'E10'
+e1, e2, e5, e10, e15, e20, e25, e30 = 'E1', 'E2', 'E5', 'E10', 'E15', 'E20', 'E25', 'E30'
 
+# bar chart of the MTEs
 fig, ax = plt.subplots(figsize=(10, 5))
 
-for xpos, GR in enumerate([1, 2, 5, 10]):
+for xpos, GR in enumerate([1, 2, 5, 10, 15, 20, 25, 30]):
 
     ax.bar(     xpos - 1.5*width/4, mte_R10_E01_mean[f"Round_{GR}"], 0.1, label=e1, color=E1_col)
     ax.errorbar(xpos - 1.5*width/4, mte_R10_E01_mean[f"Round_{GR}"], yerr=mte_R10_E01_std[f"Round_{GR}"], fmt='none', ecolor='black', capsize=5)
@@ -163,24 +171,59 @@ for xpos, GR in enumerate([1, 2, 5, 10]):
     ax.bar(     xpos + 0.5*width/4, mte_R10_E05_mean[f"Round_{GR}"], 0.1, label=e5, color=E5_col)
     ax.errorbar(xpos + 0.5*width/4, mte_R10_E05_mean[f"Round_{GR}"], yerr=mte_R10_E05_std[f"Round_{GR}"], fmt='none', ecolor='black', capsize=5)
 
-    ax.bar(     xpos + 1.5*width/4, mte_R10_E10_mean[f"Round_{GR}"], 0.1, label=e10, color=E10_col)
-    ax.errorbar(xpos + 1.5*width/4, mte_R10_E10_mean[f"Round_{GR}"], yerr=mte_R10_E10_std[f"Round_{GR}"], fmt='none', ecolor='black', capsize=5)
+    # ax.bar(     xpos + 1.5*width/4, mte_R10_E10_mean[f"Round_{GR}"], 0.1, label=e10, color=E10_col)
+    # ax.errorbar(xpos + 1.5*width/4, mte_R10_E10_mean[f"Round_{GR}"], yerr=mte_R10_E10_std[f"Round_{GR}"], fmt='none', ecolor='black', capsize=5)
 
-    e1, e2, e5, e10 = '','','','' # only label the first time
+    e1, e2, e5, e10, e15, e20, e25, e30 = '','','','','','','','' # only label the first time
 
 ax.set_xlabel('Global Rounds')
 ax.set_ylabel('Average Mean Tracking Error')
-ax.set_title('Federated Learning Performance')
-
-ax.set_xticks([0, 1, 2, 3])
-ax.set_xticklabels(['1', '2', '5', '10'])
+# ax.set_title('Federated Learning Performance')
+for spine in ax.spines.values():
+    spine.set_edgecolor('black')
+    spine.set_linewidth(2)
+ax.set_xticks([0, 1, 2, 3, 4, 5, 6, 7])
+ax.set_xticklabels(['1', '2', '5', '10', '15', '20', '25', '30'])
 plt.legend()
 plt.ylim(0, 0.5)    
-ax.grid(axis='y')
+plt.grid()
 plt.tight_layout()
 
 if SAVE:
+    fig.savefig(f"img/plots_federated/fl_local_vs_global_bar.pdf")
 
-    fig.savefig(f"img/plots_federated/fl_local_vs_global.pdf")
+# line chart of the MTEs
+plt.rcParams['font.size'] = 22
+
+fig2, ax = plt.subplots(figsize=(10, 5))
+alpha = 0.1
+x_vals = np.arange(1, mte_R10_E01_std.shape[0]+1)
+ax.plot(x_vals, mte_R10_E01_mean, label='E=1', color=E1_col)
+ax.fill_between(x_vals, mte_R10_E01_mean - mte_R10_E01_std, mte_R10_E01_mean + mte_R10_E01_std, color=E1_col, alpha=alpha)
+
+ax.plot(x_vals, mte_R10_E02_mean, label='E=2', color=E2_col)
+ax.fill_between(x_vals, mte_R10_E02_mean - mte_R10_E02_std, mte_R10_E02_mean + mte_R10_E02_std, color=E2_col, alpha=alpha)
+
+ax.plot(x_vals, mte_R10_E05_mean, label='E=5', color=E5_col)
+ax.fill_between(x_vals, mte_R10_E05_mean - mte_R10_E05_std, mte_R10_E05_mean + mte_R10_E05_std, color=E5_col, alpha=alpha)
+
+# ax.plot(x_vals, mte_R10_E10_mean, label='E10', color=E10_col)
+# ax.fill_between(x_vals, mte_R10_E10_mean - mte_R10_E10_std, mte_R10_E10_mean + mte_R10_E10_std, color=E10_col, alpha=alpha)
+
+ax.set_xlabel('Global Communication Rounds')
+ax.set_ylabel('Average Mean Tracking Error')
+
+
+# ax.set_xticklabels(['1', '2', '5', '10', '15', '20', '25', '30'])
+# ax.set_yscale('log')
+ax.grid()
+for spine in ax.spines.values():
+    spine.set_edgecolor('black')
+    spine.set_linewidth(2)
+plt.legend()
+plt.tight_layout()
+
+if SAVE:
+    fig2.savefig(f"img/plots_federated/fl_local_vs_global_line.pdf")
 
 print(f"Done.")

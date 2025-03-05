@@ -25,7 +25,7 @@ from paths import create_spline_paths
 with open("config.json") as f:
     config = json.load(f)[0]
 
-SAVE = False
+SAVE = True
 
 plt.rcParams['font.family'] = 'Times New Roman'
 plt.rcParams['font.size'] = 18
