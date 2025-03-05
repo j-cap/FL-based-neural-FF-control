@@ -21,7 +21,7 @@ with open("config.json") as f:
     config = json.load(f)[0]
 
 SAVE = True
-RERUN = False
+RERUN = False # experiment takes some time to run if RERUN = True
 
 plt.rcParams['font.family'] = 'Times New Roman'
 plt.rcParams['font.size'] = 18

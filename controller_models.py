@@ -101,31 +101,6 @@ def train_FF_model(model: nn.Module,
     
     return 
 
-
-# class PID:
-#     def __init__(self, Kp, Ki, Kd):
-#         self.Kp = Kp
-#         self.Ki = Ki
-#         self.Kd = Kd
-#         self.prev_error = 0
-#         self.integral = 0
-#         self.t_prev = -1e-8
-#         self.integral_max = 1.75
-
-#     def control(self, error, t):
-#         dt = t - self.t_prev
-#         self.integral += error * dt
-#         derivative = (error - self.prev_error) * dt
-#         self.prev_error = error
-#         self.t_prev = t
-
-#         if self.integral > self.integral_max:
-#             # print("Integral too large")
-#             self.integral = self.integral_max * np.sign(self.integral)
-
-#         return self.Kp * error + self.Ki * self.integral + self.Kd * derivative
-    
-
 class TrajectoryFollower:
     """ 
     Control law from: 

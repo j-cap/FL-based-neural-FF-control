@@ -8,7 +8,7 @@ controller and compare the performance with the analytic FF+FB controller.
 """
 
 import numpy as np
-import pandas as pd
+import pandas as pd # type: ignore
 import matplotlib.pyplot as plt
 from torch import nn
 import torch

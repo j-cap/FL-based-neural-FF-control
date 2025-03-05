@@ -6,7 +6,6 @@ FL functionality for learning the FF for the car models
 """
 
 import pandas as pd # type: ignore
-import matplotlib.pyplot as plt
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -16,18 +15,8 @@ from paths import SplinePath
 from car_models import BicycleModel
 from controller_models import FFmodelData
 from utils_control import simulate_closed_loop_traj_follow
-
 from typing import Dict
-import colormaps as cmaps # type: ignore
 
-# def flatten_params(model):
-#     # Collect all the trainable parameters in a list
-#     params = [param.view(-1) for param in model.parameters() if param.requires_grad]
-    
-#     # Concatenate them into a single 1D tensor (flattened array)
-#     flat_params = torch.cat(params, dim=0)
-    
-#     return flat_params
 
 class Node:
     """ handling the local clients for the FL procedure """
@@ -153,58 +142,6 @@ class ServerNode(Node):
 
         return mean_traj_error, log_traj
     
-    # def calc_LCG(self, client_messages):
-    #     """ Calculate the Local Gradient Consistency (LGC) for the given client messages. """
-    #     nr_clients = len(client_messages)
-
-    #     local_models = [model for model, _ in client_messages]
-
-    #     if client_messages[0][1]['nr_samples'] == None:
-    #         agg_weights = np.ones(nr_clients, 1)
-    #     else:
-    #         agg_weights = [info['nr_samples'] for _, info in client_messages]
-    #     agg_weights = np.array(agg_weights) / sum(agg_weights)
-
-    #     # flatten the NN weights for each model
-    #     global_params = flatten_params(self.model)
-    #     pseudo_gradients = torch.zeros((global_params.shape[0], nr_clients))
-    #     for i, local_model in enumerate(local_models):
-    #         p = flatten_params(local_model)
-    #         pseudo_gradients[:,i] = p - global_params.view(-1)
-        
-    #     def pairwise_cosine_sim(p1, p2):
-    #         """ Calculate the cosine similarity between two parameter vectors. """
-    #         # assert that shape of models is the same
-    #         assert [p1.shape == p2.shape], "Models must have the same shape"
-    #         cos = nn.CosineSimilarity(dim=0, eps=1e-6)
-    #         return cos(p1, p2).item()
-
-    #     LGC_matrix = np.zeros((nr_clients, nr_clients))
-    #     for i in range(nr_clients):
-    #         for j in range(nr_clients):
-    #             LGC_matrix[i,j] = pairwise_cosine_sim(pseudo_gradients[:,i], pseudo_gradients[:,j])
-
-    #     self.LGC_matrices['round_'+str(self.rounds)] = LGC_matrix
-
-    #     LGC = 0
-    #     for i in range(nr_clients):
-    #         for j in range(nr_clients):
-    #             if i != j and j > i:
-    #                 LGC += agg_weights[i] * agg_weights[j] * LGC_matrix[i,j]
-    #     LGC = LGC / nr_clients
-
-    #     return LGC, LGC_matrix
-    
-    # def plot_LGC_matrix(self, round_number):
-    #     fig = plt.figure(figsize=(6, 6))
-    #     ax = fig.add_subplot(111)
-    #     cax = ax.matshow(self.LGC_matrices['round_'+str(round_number)], cmap=cmaps.prinsenvlag.discrete(20), vmin=-1, vmax=1)
-    #     fig.colorbar(cax)
-    #     plt.title(f"LGC matrix for round {round_number}")
-    #     plt.show()
-    #     return
-
-
 class ClientNode(Node):
     def __init__(self, 
                  id: int, 
