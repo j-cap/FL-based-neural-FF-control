@@ -91,11 +91,13 @@ conda create -f env.yml  # If a conda environment file is available
     ```bash
     python exp_client_paths.py
     ```
+    ![](img/img_png/fig-12.png)
 - **Control Performance:**
     - Evaluate the performance of the pure feedforward and feedback control
     ```bash
     python exp_FF_FB_performance_results.py
     ```
+    ![](img/img_png/fig-6.png)
 ## Visualization
 All plots in the paper are given in the `/img/` folder.
 
