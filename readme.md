@@ -118,7 +118,7 @@ conda create -f env.yml  # If a conda environment file is available
 All plots in the paper are given in the `/img/` folder.
 
 ## Results 
-Specifc client path information is stored in the `/results/clients/`.
+Specific client path information is stored in the `/results/clients/`.
 
 The results of the experiment `exp_FL_eval_local_vs_global.py` are stored in the `/results/FL_local_vs_global/` folder. 
 This experiment evaluates the number of local epochs vs. communication rounds for federated learning and takes some time to run. 
